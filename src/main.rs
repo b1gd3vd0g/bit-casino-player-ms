@@ -17,10 +17,8 @@ async fn main() {
         .nest("/users", user_routes())
         .with_state(db_pool);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("Listening on {addr}");
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
+    let address = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let listener = tokio::net::TcpListener::bind(address).await.unwrap();
+    println!("Listening on {}", address.to_string());
     axum::serve(listener, app).await.unwrap();
 }

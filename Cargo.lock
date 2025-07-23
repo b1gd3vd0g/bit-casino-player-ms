@@ -163,6 +163,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "55248b47b0caf0546f7988906588779981c43bb1bc9d0c44087278f80cdb44ba"
 
 [[package]]
+name = "bit-casino-player-ms"
+version = "0.1.0"
+dependencies = [
+ "argon2",
+ "axum",
+ "dotenv",
+ "jsonwebtoken",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1996,21 +2011,6 @@ name = "urlencoding"
 version = "2.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da"
-
-[[package]]
-name = "user-service"
-version = "0.1.0"
-dependencies = [
- "argon2",
- "axum",
- "dotenv",
- "jsonwebtoken",
- "serde",
- "serde_json",
- "sqlx",
- "tokio",
- "uuid",
-]
 
 [[package]]
 name = "utf8_iter"

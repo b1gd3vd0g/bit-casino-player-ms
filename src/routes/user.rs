@@ -19,6 +19,11 @@ pub struct RegistrationResponse {
     email: String,
 }
 
+#[derive(Serialize)]
+pub struct LoginResponse {
+    token: String,
+}
+
 /// Register a new user.
 pub async fn register_user(
     State(pool): State<PgPool>,
@@ -58,7 +63,38 @@ pub async fn register_user(
     }
 }
 
+pub async fn validate_login(
+    State(pool): State<PgPool>,
+    Json(payload): Json<RegistrationPayload>,
+) -> Result<Json<LoginResponse>, (StatusCode, String)> {
+    let authn_failed = String::from("Authentication failed!");
+    let user = sqlx::query_as!(
+        User,
+        r#"
+        SELECT username, hashed_password, id, email FROM gamblers
+        WHERE username ILIKE $1;
+        "#,
+        payload.username
+    )
+    .fetch_one(&pool)
+    .await;
+
+    let user = match user {
+        Ok(u) => u,
+        Err(_) => return Err((StatusCode::UNAUTHORIZED, authn_failed)),
+    };
+
+    match auth::verify_password(&payload.password, &user.hashed_password) {
+        Ok(_) => Ok(Json(LoginResponse {
+            token: String::from("blablabla"),
+        })),
+        Err(_) => Err((StatusCode::UNAUTHORIZED, authn_failed)),
+    }
+}
+
 /// The router handling all user paths.
 pub fn user_routes() -> Router<PgPool> {
-    Router::new().route("/register", post(register_user))
+    Router::new()
+        .route("/register", post(register_user))
+        .route("/authn", post(validate_login))
 }

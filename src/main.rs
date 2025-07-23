@@ -1,5 +1,6 @@
-mod auth;
 mod db;
+mod hashing;
+mod jwt;
 mod models;
 mod routes;
 

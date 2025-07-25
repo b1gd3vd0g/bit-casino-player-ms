@@ -14,7 +14,7 @@ use crate::{
 
 /// The expected request body shape for the registration request.
 #[derive(Deserialize)]
-pub struct ReqBody {
+struct ReqBody {
     username: String,
     email: String,
     password: String,

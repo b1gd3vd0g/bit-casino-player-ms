@@ -14,6 +14,16 @@ pub struct AuthnTokenReqs {
     pub email: String,
 }
 
+impl AuthnTokenReqs {
+    pub fn new(id: Uuid, username: String, email: String) -> Self {
+        AuthnTokenReqs {
+            id: id,
+            username: username,
+            email: email,
+        }
+    }
+}
+
 /// The full payload of an authentication token.
 #[derive(Serialize, Deserialize)]
 pub struct AuthnTokenPayload {

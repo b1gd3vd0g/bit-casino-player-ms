@@ -18,6 +18,7 @@ pub enum ResponseBody<T: Serialize> {
 }
 
 /// This is returned from both the registration request and the sign in request.
+#[derive(Serialize)]
 pub struct TokenResponse {
     pub token: String,
 }

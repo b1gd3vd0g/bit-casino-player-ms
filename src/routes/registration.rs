@@ -1,36 +1,50 @@
+//! This module holds the handler function for the request to create a new player account, as well
+//! as any related structs.
+
 use axum::{extract::State, http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::{hashing, models::user::User};
+use crate::{
+    hashing,
+    models::user::User,
+    routes::responses::{ErrorResponse, ResponseBody},
+};
 
+/// The expected request body shape for the registration request.
 #[derive(Deserialize)]
-pub struct RegistrationPayload {
+pub struct ReqBody {
     username: String,
     email: String,
     password: String,
 }
 
+/// The response returned after a successful registration.
+/// It contains public information about the new player.
 #[derive(Serialize)]
-pub struct RegistrationResponse {
+pub struct SuccessBody {
     id: Uuid,
     username: String,
     email: String,
 }
 
-/// Register a new user.
+/// The HTTP handler for registering a new user.
+///
+/// # Returns
+///
+/// A tuple containing the HTTP status code and the response body.
 pub async fn register_user(
     State(pool): State<PgPool>,
-    Json(payload): Json<RegistrationPayload>,
-) -> Result<Json<RegistrationResponse>, (StatusCode, String)> {
+    Json(payload): Json<ReqBody>,
+) -> (StatusCode, ResponseBody<SuccessBody>) {
     let hashed = match hashing::hash_password(&payload.password) {
         Ok(str) => str,
         Err(_) => {
-            return Err((
-                StatusCode::INTERNAL_SERVER_ERROR,
-                String::from("Could not hash password."),
-            ))
+            let response = ResponseBody::Fail(ErrorResponse {
+                message: String::from("Password could not be hashed."),
+            });
+            return (StatusCode::INTERNAL_SERVER_ERROR, response);
         }
     };
 
@@ -49,11 +63,23 @@ pub async fn register_user(
     .await;
 
     match user {
-        Ok(user) => Ok(Json(RegistrationResponse {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-        })),
-        Err(e) => Err((StatusCode::INTERNAL_SERVER_ERROR, e.to_string())),
+        Ok(user) => {
+            return (
+                StatusCode::CREATED,
+                ResponseBody::Pass(SuccessBody {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                }),
+            )
+        }
+        Err(_) => {
+            return (
+                StatusCode::CONFLICT,
+                ResponseBody::Fail(ErrorResponse {
+                    message: String::from("Email or username already exists."),
+                }),
+            )
+        }
     }
 }

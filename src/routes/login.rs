@@ -77,9 +77,9 @@ pub async fn validate_login(
         Err(_) => {
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(ResponseBody::Fail(ErrorResponse {
-                    message: String::from("Error creating authentication token."),
-                })),
+                Json(ResponseBody::Fail(ErrorResponse::new(
+                    "Token could not be encoded.",
+                ))),
             )
         }
     }

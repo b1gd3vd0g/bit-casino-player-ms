@@ -81,24 +81,28 @@ pub async fn get_player_by_token(
 /// * username: The username of the new player.
 /// * email: The email address of the new player.
 /// * hash: The hashed password of the new player.
+///
+/// # Returns
+/// The newly created player on success, and an error if not.
 pub async fn create_new_player(
     pool: &PgPool,
     username: String,
     email: String,
     hash: String,
-) -> Result<(), sqlx::Error> {
-    sqlx::query!(
+) -> Result<Player, sqlx::Error> {
+    sqlx::query_as!(
+        Player,
         r#"
         INSERT INTO players (username, email, password)
         VALUES ($1, $2, $3)
+        RETURNING *;
         "#,
         username,
         email,
         hash
     )
-    .execute(pool)
-    .await?;
-    Ok(())
+    .fetch_one(pool)
+    .await
 }
 
 /// Delete a single player account based on their authentication token payload.

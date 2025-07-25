@@ -2,34 +2,30 @@
 //! as any related structs.
 
 use axum::{extract::State, http::StatusCode, Json};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
     hashing,
+    jwt::{encode_authn_token, AuthnTokenReqs},
     models::user::User,
-    routes::responses::{ErrorResponse, ResponseBody},
+    routes::responses::{ErrorResponse, ResponseBody, TokenResponse},
 };
 
 /// The expected request body shape for the registration request.
 #[derive(Deserialize)]
-struct ReqBody {
+pub struct ReqBody {
     username: String,
     email: String,
     password: String,
 }
 
-/// The response returned after a successful registration.
-/// It contains public information about the new player.
-#[derive(Serialize)]
-pub struct SuccessBody {
-    id: Uuid,
-    username: String,
-    email: String,
-}
-
-/// The HTTP handler for registering a new user.
+/// The HTTP handler for registering a new user. Generates an authentication token upon success.
+///
+/// # Parameters
+///
+/// * `pool`: The database connection pool.
+/// * `payload`: The request body containing the username, email, and password.
 ///
 /// # Returns
 ///
@@ -37,14 +33,14 @@ pub struct SuccessBody {
 pub async fn register_user(
     State(pool): State<PgPool>,
     Json(payload): Json<ReqBody>,
-) -> (StatusCode, ResponseBody<SuccessBody>) {
+) -> (StatusCode, Json<ResponseBody<TokenResponse>>) {
     let hashed = match hashing::hash_password(&payload.password) {
         Ok(str) => str,
         Err(_) => {
             let response = ResponseBody::Fail(ErrorResponse {
                 message: String::from("Password could not be hashed."),
             });
-            return (StatusCode::INTERNAL_SERVER_ERROR, response);
+            return (StatusCode::INTERNAL_SERVER_ERROR, Json(response));
         }
     };
 
@@ -62,23 +58,35 @@ pub async fn register_user(
     .fetch_one(&pool)
     .await;
 
-    match user {
-        Ok(user) => {
+    let token_reqs = match user {
+        Ok(user) => AuthnTokenReqs {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        },
+        Err(_) => {
+            return (
+                StatusCode::CONFLICT,
+                Json(ResponseBody::Fail(ErrorResponse {
+                    message: String::from("Email or username already exists."),
+                })),
+            )
+        }
+    };
+
+    match encode_authn_token(token_reqs) {
+        Ok(token) => {
             return (
                 StatusCode::CREATED,
-                ResponseBody::Pass(SuccessBody {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                }),
+                Json(ResponseBody::Pass(TokenResponse { token: token })),
             )
         }
         Err(_) => {
             return (
-                StatusCode::CONFLICT,
-                ResponseBody::Fail(ErrorResponse {
-                    message: String::from("Email or username already exists."),
-                }),
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(ResponseBody::Fail(ErrorResponse {
+                    message: String::from("Error creating authentication token."),
+                })),
             )
         }
     }

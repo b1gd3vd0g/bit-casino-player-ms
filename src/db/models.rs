@@ -16,6 +16,6 @@ pub struct Player {
     pub id: Uuid,
     pub username: String,
     pub email: String,
-    pub hashed_password: String,
+    pub password: String,
     pub created_at: DateTime<Utc>,
 }

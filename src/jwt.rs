@@ -89,9 +89,11 @@ pub fn encode_authn_token(reqs: AuthnTokenReqs) -> Result<String, JWTError> {
 /// * `Ok(TokenData<AuthnTokenPayload>)` when the token is decoded.
 /// * `Err(JWTError)` if the token cannot be decoded.
 pub fn decode_authn_token(token: String) -> Result<TokenData<AuthnTokenPayload>, JWTError> {
+    let secret =
+        env::var("JWT_SECRET").expect("Environment is not set up properly; missing 'JWT_SECRET'.");
     decode(
         &token,
-        &DecodingKey::from_secret("secret".as_ref()),
+        &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::new(Algorithm::HS256),
     )
 }

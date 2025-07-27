@@ -6,6 +6,7 @@ mod router;
 
 use dotenv::dotenv;
 use std::net::SocketAddr;
+use tokio::net::TcpListener;
 
 use crate::router::router;
 
@@ -17,7 +18,7 @@ async fn main() {
     let app = router().with_state(db_pool);
 
     let address = SocketAddr::from(([0, 0, 0, 0], 3000));
-    let listener = tokio::net::TcpListener::bind(address).await.unwrap();
+    let listener = TcpListener::bind(address).await.unwrap();
     println!("Listening on {}", address.to_string());
     axum::serve(listener, app).await.unwrap();
 }

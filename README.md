@@ -39,3 +39,25 @@ The following items still need to be completed:
 - **uuid / chrono** – For UUIDs and timestamps
 - **Docker** – Containerization
 - **Terraform** *(optional)* – Infrastructure-as-code
+
+---
+
+## How to use this repository
+
+### Branches
+
+- **master** - Stable, production-ready code.
+  - As of right now, this branch should only include code that has been tested thoroughly on the `compose` branch.
+- **compose** - Used to test how this service integrates with the other bit casino services using docker compose.
+  - This branch will utilize its own private postgres database container.
+  - This branch no longer uses the dotenv crate to load environment variables.
+  - The docker-compose.yaml file is defined externally to this service.
+- **docker** - Used to test that this service can be containerized properly.
+  - This branch will utilize a postgres database shared with the other services that is hosted on my local machine.
+  - This branch uses the dotenv crate to load environment variables.
+  - This branch can be containerized and tested individually, or alongside any of the other services.
+- **local** - Used to test that this service can be built and run on my local machine.
+  - This branch will utilize a postgres database shared with the other services on my local machine.
+  - This branch uses the dotenv crate to load environment variables.
+  - This branch should is intended to be run simply by using "cargo run".
+

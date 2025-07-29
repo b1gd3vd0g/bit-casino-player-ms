@@ -70,7 +70,7 @@ impl AuthnTokenPayload {
 pub fn encode_authn_token(reqs: AuthnTokenReqs) -> Result<String, JWTError> {
     let payload = AuthnTokenPayload::new(reqs);
     let secret =
-        env::var("JWT_SECRET").expect("Environment is not set up properly; missing 'JWT_SECRET'.");
+        env::var("JWT_SECRET").expect("Environment is not set up properly; missing 'JWT_SECRET'");
     encode(
         &Header::default(),
         &payload,
@@ -90,10 +90,31 @@ pub fn encode_authn_token(reqs: AuthnTokenReqs) -> Result<String, JWTError> {
 /// * `Err(JWTError)` if the token cannot be decoded.
 pub fn decode_authn_token(token: String) -> Result<TokenData<AuthnTokenPayload>, JWTError> {
     let secret =
-        env::var("JWT_SECRET").expect("Environment is not set up properly; missing 'JWT_SECRET'.");
+        env::var("JWT_SECRET").expect("Environment is not set up properly; missing 'JWT_SECRET'");
     decode(
         &token,
         &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::new(Algorithm::HS256),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::test_utils::test_setup;
+
+    use super::*;
+
+    #[test]
+    fn test_encode_equal_decode() {
+        test_setup();
+        let id = Uuid::new_v4();
+        let username = String::from("b1gd3vd0g");
+        let email = String::from("b1gd3vd0g@bigdevdog.com");
+        let reqs = AuthnTokenReqs::new(id.clone(), username.clone(), email.clone());
+        let token = encode_authn_token(reqs).unwrap();
+        let decoded = decode_authn_token(token).unwrap();
+        assert_eq!(decoded.claims.sub, id);
+        assert_eq!(decoded.claims.username, username);
+        assert_eq!(decoded.claims.email, email);
+    }
 }

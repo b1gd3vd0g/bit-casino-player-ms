@@ -19,7 +19,5 @@ RUN apt-get update && apt-get install -y libssl3 ca-certificates && rm -rf /var/
 WORKDIR /app
 COPY --from=builder /app/target/release/bit-casino-player-ms .
 USER b1gd3vd0g
-ENV DATABASE_URL=postgres://postgres:password@db:5432/bit_casino
-ENV JWT_SECRET=secret
 EXPOSE 3000
 CMD ["./bit-casino-player-ms"]

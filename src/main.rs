@@ -13,7 +13,7 @@ use crate::router::router;
 
 #[tokio::main]
 async fn main() {
-    dotenv::from_filename(".env.local").ok();
+    dotenv::from_filename(".env.docker").ok();
     let db_pool = db::connect().await;
     let app = router().with_state(db_pool);
 

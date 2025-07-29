@@ -3,6 +3,7 @@ mod handlers;
 mod hashing;
 mod jwt;
 mod router;
+mod test_utils;
 
 use dotenv::dotenv;
 use std::net::SocketAddr;

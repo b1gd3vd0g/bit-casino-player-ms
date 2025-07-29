@@ -5,7 +5,6 @@ mod jwt;
 mod router;
 mod test_utils;
 
-use dotenv::dotenv;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 
@@ -13,8 +12,6 @@ use crate::router::router;
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok();
-
     let db_pool = db::connect().await;
     let app = router().with_state(db_pool);
 

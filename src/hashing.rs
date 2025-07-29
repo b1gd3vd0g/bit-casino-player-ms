@@ -70,3 +70,16 @@ pub fn verify_password(password: &str, hash: &str) -> Result<bool, HashError> {
         .verify_password(password.as_bytes(), &parsed_hash)
         .is_ok())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    pub fn test_hashing() {
+        let password = "hunter2";
+        let hash = hash_password(password).expect("Hashing failed");
+        assert!(verify_password(password, &hash).unwrap());
+        assert!(!verify_password("wrongpassword", &hash).unwrap());
+    }
+}

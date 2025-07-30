@@ -1,10 +1,13 @@
 mod db;
+mod error;
 mod handlers;
 mod hashing;
 mod jwt;
+mod requests;
 mod router;
 mod test_utils;
 
+use dotenv;
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 
@@ -12,6 +15,7 @@ use crate::router::router;
 
 #[tokio::main]
 async fn main() {
+    dotenv::from_filename(".env.docker").ok();
     let db_pool = db::connect().await;
     let app = router().with_state(db_pool);
 

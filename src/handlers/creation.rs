@@ -12,6 +12,7 @@ use crate::{
     handlers::responses::{MessageResponse, TokenResponse},
     hashing,
     jwt::{encode_authn_token, AuthnTokenReqs},
+    requests::currency::create_bit_wallet,
 };
 
 /// The expected request body shape for the registration request.
@@ -50,12 +51,27 @@ pub async fn handle_player_creation(
         }
     };
 
-    match encode_authn_token(token_reqs) {
-        Ok(token) => (StatusCode::CREATED, Json(TokenResponse::new(token))).into_response(),
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(MessageResponse::token_creation_failure()),
-        )
-            .into_response(),
+    let token = match encode_authn_token(token_reqs) {
+        Ok(tok) => tok,
+        Err(_) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(MessageResponse::token_creation_failure()),
+            )
+                .into_response()
+        }
+    };
+
+    match create_bit_wallet(token.clone()).await {
+        Ok(()) => return (StatusCode::CREATED, Json(TokenResponse::new(token))).into_response(),
+        Err(_) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(MessageResponse::new(
+                    "Player created, but wallet could not be initialized. This should not happen!",
+                )),
+            )
+                .into_response()
+        }
     }
 }

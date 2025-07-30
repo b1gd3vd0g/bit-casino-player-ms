@@ -2,6 +2,7 @@ mod db;
 mod handlers;
 mod hashing;
 mod jwt;
+mod requests;
 mod router;
 mod test_utils;
 

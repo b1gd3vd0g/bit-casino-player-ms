@@ -1,5 +1,4 @@
 mod db;
-mod error;
 mod handlers;
 mod hashing;
 mod jwt;

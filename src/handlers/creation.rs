@@ -4,7 +4,7 @@ use axum::{
     response::{IntoResponse, Response},
     Json,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 
 use crate::{
@@ -13,6 +13,7 @@ use crate::{
     hashing,
     jwt::{encode_authn_token, AuthnTokenReqs},
     requests::currency::create_bit_wallet,
+    validators::{validate_email, validate_password, validate_username},
 };
 
 /// The expected request body shape for the registration request.
@@ -21,6 +22,13 @@ pub struct ReqBody {
     username: String,
     email: String,
     password: String,
+}
+
+#[derive(Serialize)]
+pub struct InvalidRequestBodyResponse {
+    username: bool,
+    password: bool,
+    email: bool,
 }
 
 pub async fn handle_player_creation(
@@ -37,6 +45,15 @@ pub async fn handle_player_creation(
                 .into_response();
         }
     };
+
+    let val = InvalidRequestBodyResponse {
+        username: validate_username(&body.username),
+        email: validate_email(&body.email),
+        password: validate_password(&body.password),
+    };
+    if !(val.username && val.password && val.email) {
+        return (StatusCode::BAD_REQUEST, Json(val)).into_response();
+    }
 
     let player = create_new_player(&pool, body.username, body.email, hash).await;
 

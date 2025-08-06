@@ -1,3 +1,6 @@
+//! This module validates input for player creation, ensuring that only valid data gets put into the
+//! database.
+
 use regex::Regex;
 
 /// Validate a username against the following rules:

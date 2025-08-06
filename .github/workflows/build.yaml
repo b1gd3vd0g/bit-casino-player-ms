@@ -39,18 +39,18 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-docker-
+            ${{ runner.os }}-buildx-
       
       - name: Build docker image
-        run: |
-          docker buildx build \
-          -t bit-casino-player-ms \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --progress=plain \
-          --cache-from=type=local,src=/tmp/.buildx-cache \
-          --cache-to=type=local,dest=/tmp/.buildx-cache \
-          .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: bit-casino-player-ms:latest
+          load: true
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
         

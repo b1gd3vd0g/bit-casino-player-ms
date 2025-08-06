@@ -52,5 +52,6 @@ jobs:
           load: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-        
+        env:
+          JWT_SECRET: supersecretvalue
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres

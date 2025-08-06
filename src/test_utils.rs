@@ -1,6 +1,4 @@
-use std::sync::Once;
-
-use dotenv::dotenv;
+use std::{env, sync::Once};
 
 #[allow(dead_code)]
 static INIT: Once = Once::new(); // Not dead
@@ -9,6 +7,6 @@ static INIT: Once = Once::new(); // Not dead
 #[allow(dead_code)] // This is not dead code, just used in tests.
 pub fn test_setup() {
     INIT.call_once(|| {
-        dotenv().ok();
+        env::set_var("JWT_SECRET", "supersecretvalue");
     });
 }

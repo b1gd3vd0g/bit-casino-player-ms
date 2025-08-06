@@ -1,3 +1,5 @@
+//! This handler serves the API documentation at the base path (GET).
+
 use std::fs;
 
 use axum::{

@@ -8,10 +8,7 @@ COPY Cargo.toml Cargo.lock ./
 COPY ./src ./src
 COPY ./.sqlx ./.sqlx
 ENV SQLX_OFFLINE=true
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/usr/local/cargo/git \
-    --mount=type=cache,target=target \
-    cargo build --release
+RUN cargo build --release
 
 #################
 # Runtime Stage #

@@ -37,9 +37,12 @@ jobs:
       
       - name: Build docker image
         run: |
-          docker build \
+          docker buildx build \
           -t bit-casino-player-ms \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --progress=plain .
+          --progress=plain \
+          --cache-from=type=local,src=/tmp/.buildx-cache \
+          --cache-to=type=local,dest=/tmp/.buildx-cache \
+          .
 
         

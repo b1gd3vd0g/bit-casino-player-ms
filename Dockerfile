@@ -20,4 +20,5 @@ WORKDIR /app
 COPY --from=builder /app/target/release/bit-casino-player-ms .
 USER b1gd3vd0g
 EXPOSE 3000
+ENV STAGE=docker
 CMD ["./bit-casino-player-ms"]

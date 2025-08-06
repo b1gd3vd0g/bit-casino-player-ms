@@ -7,14 +7,28 @@ mod router;
 mod test_utils;
 mod validators;
 
-use std::net::SocketAddr;
+use std::{env, net::SocketAddr};
 
+use dotenv::dotenv;
 use tokio::net::TcpListener;
 
 use crate::router::router;
 
 #[tokio::main]
 async fn main() {
+    match env::var("STAGE") {
+        Err(_) => {
+            // local test (cargo run).
+            dotenv().ok();
+        }
+        Ok(stage) => {
+            // container test (docker run)
+            if stage == "docker" {
+                dotenv::from_filename(".env.docker").ok();
+            }
+        } // Otherwise, the env should be set elsewhere (such as in the docker-compose.yaml file)
+    }
+
     let db_pool = db::connect().await;
     let app = router().with_state(db_pool);
 

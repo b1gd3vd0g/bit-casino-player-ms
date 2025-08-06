@@ -1,7 +1,7 @@
 ###############
 # Build Stage #
 ###############
-FROM rust:latest as builder
+FROM rust:latest AS builder
 WORKDIR /app
 RUN apt-get update && apt-get install -y libssl-dev pkg-config
 COPY Cargo.toml Cargo.lock ./

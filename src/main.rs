@@ -5,6 +5,7 @@ mod jwt;
 mod requests;
 mod router;
 mod test_utils;
+mod validators;
 
 use std::net::SocketAddr;
 

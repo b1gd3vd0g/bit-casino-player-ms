@@ -1,63 +1,30 @@
-# 🃏 BitCasino Player Microservice
+# Bit Casino -- Player Microservice
 
-This is the **Player Microservice** for the BitCasino platform, responsible for managing user registration, authentication, and player profile data. Built with **Rust**, **Axum**, and **SQLx**, it is designed to be lightweight, secure, and easily deployable.
+> [!NOTE]
+> This service is currently **stable** but under development.
 
----
-
-## // TODO
-
-The project is currently at a stable point, where all routes defined in the [documentation](/openapi.yaml) work as expected. The application can be successfully containerized using the Dockerfile.
-
-The following items still need to be completed:
-
-- Fully document any modules which are not sufficiently commented.
-- Add unit and integration tests
-- Deploy to production (this should wait until more services are made ready)
-
----
-
-## 🚀 Features
-
-- 🔐 Secure user registration & login
-- 🧂 Password hashing using Argon2
-- 📆 Timestamps for user creation and updates
-- 📄 JWT-based authentication (Bearer tokens)
-- 🗃️ PostgreSQL integration via SQLx
-- 🧪 Unit & integration tests
-- ⚙️ Environment-based configuration
-- 🐳 Docker-ready for containerized deployment
-
----
-
-## 🧱 Tech Stack
-
-- **Rust** – Safe and fast systems programming
-- **Axum** – Web framework built on hyper
-- **SQLx** – Async PostgreSQL driver with compile-time query checks
-- **Tokio** – Async runtime
-- **dotenv** – Load configuration from `.env`
-- **uuid / chrono** – For UUIDs and timestamps
-- **Docker** – Containerization
-- **Terraform** *(optional)* – Infrastructure-as-code
-
----
+A **REST API** written in **Rust** handling **player accounts** and **authentication** for **Bit Casino** - a virtual gambling simulator. This app can be containerized using **Docker**.
 
 ## How to use this repository
 
-### Branches
+This service is not very useful on its own. It relies upon the **currency-ms** to create a new bit wallet when a new player is created.
 
-- **master** - Stable, production-ready code.
-  - As of right now, this branch should only include code that has been tested thoroughly on the `compose` branch.
-- **compose** - Used to test how this service integrates with the other bit casino services using docker compose.
-  - This branch will utilize its own private postgres database container.
-  - This branch no longer uses the dotenv crate to load environment variables.
-  - The docker-compose.yaml file is defined externally to this service.
-- **docker** - Used to test that this service can be containerized properly.
-  - This branch will utilize a postgres database shared with the other services that is hosted on my local machine.
-  - This branch uses the dotenv crate to load environment variables.
-  - This branch can be containerized and tested individually, or alongside any of the other services.
-- **local** - Used to test that this service can be built and run on my local machine.
-  - This branch will utilize a postgres database shared with the other services on my local machine.
-  - This branch uses the dotenv crate to load environment variables.
-  - This branch should is intended to be run simply by using "cargo run".
+To test this API alongside the whole environment, you can follow the instructions in the [Infrastructure](https://github.com/b1gd3vd0g/bit-casino-infra) to test all services locally using **Docker Compose**.
 
+You can then interact via the frontend at `localhost:60000` or call the integrated player microservice directly at `localhost:60600`.
+
+## Functionality
+
+The player microservice currently supports the following functions:
+
+- Create a new player account
+- Delete a player account
+- Authenticate a player's login credentials
+- Authenticate a player via JWT (provided by creation/login functions)
+
+## Related Repositories
+
+- [Currency Microservice](https://github.com/b1gd3vd0g/bit-casino-currency-ms) - Handles bit wallet creation and safe transactions.
+- [Reward Microservice](https://github.com/b1gd3vd0g/bit-casino-reward-ms) - Handles daily bonus claims and streaks.
+- [Slots Microservice](https://github.com/b1gd3vd0g/bit-casino-slots-ms) - Handles the backend for the custom slot machine game **Byte Builder**.
+- [Infrastructure](https://github.com/b1gd3vd0g/bit-casino-infra) - Allows for integration testing locally using **docker compose**.

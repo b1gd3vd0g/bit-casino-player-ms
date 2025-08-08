@@ -27,4 +27,5 @@ The player microservice currently supports the following functions:
 - [Currency Microservice](https://github.com/b1gd3vd0g/bit-casino-currency-ms) - Handles bit wallet creation and safe transactions.
 - [Reward Microservice](https://github.com/b1gd3vd0g/bit-casino-reward-ms) - Handles daily bonus claims and streaks.
 - [Slots Microservice](https://github.com/b1gd3vd0g/bit-casino-slots-ms) - Handles the backend for the custom slot machine game **Byte Builder**.
+- [Frontend](https://github.com/b1gd3vd0g/bit-casino-frontend) - A react app creating a user-friendly interface with which to interact with the backend.
 - [Infrastructure](https://github.com/b1gd3vd0g/bit-casino-infra) - Allows for integration testing locally using **docker compose**.

@@ -3,11 +3,16 @@
 > [!NOTE]
 > This service is currently **stable** but under development.
 
-A **REST API** written in **Rust** handling **player accounts** and **authentication** for **Bit Casino** - a virtual gambling simulator. This app can be containerized using **Docker**.
+A **REST API** written in **Rust** handling **player accounts** and **authentication** for **Bit Casino** - a virtual gambling simulator.
+
+### Features
+
+- Secure password storage, hashing using Argon2.
+- Safe, easy authentication using JSON Web Tokens and Bearer Authentication.
 
 ## How to use this repository
 
-This service is not very useful on its own. It relies upon the **currency-ms** to create a new bit wallet when a new player is created.
+This service is not very useful on its own. It relies upon the [**Currency Microservice**](https://github.com/b1gd3vd0g/bit-casino-currency-ms) and a **PostgreSQL** database.
 
 To test this API alongside the whole environment, you can follow the instructions in the [Infrastructure](https://github.com/b1gd3vd0g/bit-casino-infra) to test all services locally using **Docker Compose**.
 
